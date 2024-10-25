@@ -7,6 +7,9 @@ let validAccounts = [];
 let totalAccountsTested = 0; // Compte total des comptes testés
 let totalValidAccounts = 0;   // Compte total des comptes valides
 
+// Proxy CORS
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
+
 // Fonction pour afficher le spinner
 function showSpinner() {
     spinnerContainer.style.display = "flex";
@@ -21,19 +24,13 @@ function hideSpinner() {
 async function testerConnections(panel, mac, user, password, m3u) {
     let valide = false;
 
-    // Assurez-vous que le panel est en HTTPS
-    if (!panel.startsWith("https://")) {
-        console.warn(`Le panel ${panel} n'est pas accessible via HTTPS. Connexion échouée.`);
-        return false;
-    }
-
     // Prioriser la connexion Xtream
-    if (user && password) {
+    if (user && password && panel) {
         console.log(`Test de la connexion Xtream (User/Pass) : ${user}/${password}`);
         valide = await testerXtream(panel, user, password);
     } 
     // Ensuite tester la connexion MAC
-    else if (mac) {
+    else if (mac && panel) {
         console.log(`Test de la connexion MAC : ${mac}`);
         valide = await testerMac(panel, mac);
     } 
@@ -48,7 +45,7 @@ async function testerConnections(panel, mac, user, password, m3u) {
 
 // Fonction pour tester une connexion Xtream
 async function testerXtream(panel, user, password) {
-    const xtreamUrl = `${panel}/player_api.php?username=${user}&password=${password}`;
+    const xtreamUrl = `${corsProxy}${panel}/player_api.php?username=${user}&password=${password}`;
 
     try {
         const response = await fetch(xtreamUrl);
@@ -66,7 +63,7 @@ async function testerXtream(panel, user, password) {
 
 // Fonction pour tester une connexion MAC
 async function testerMac(panel, mac) {
-    const macUrl = `${panel}/player_api.php?mac=${mac}`;
+    const macUrl = `${corsProxy}${panel}/player_api.php?mac=${mac}`;
 
     try {
         const response = await fetch(macUrl);
@@ -84,8 +81,10 @@ async function testerMac(panel, mac) {
 
 // Fonction pour tester une connexion M3U
 async function testerM3U(m3u) {
+    const m3uUrl = `${corsProxy}${m3u}`;
+    
     try {
-        const response = await fetch(m3u);
+        const response = await fetch(m3uUrl);
         if (response.ok) {
             return true; // Connexion réussie
         }
@@ -173,7 +172,7 @@ function detecterPanel(lignes) {
     for (const ligne of lignes) {
         const panel = ligne.match(/(http:\/\/[^/]+)/);
         if (panel) {
-            return panel[1].replace(/^http:\/\//, 'https://'); // Remplace http par https
+            return panel[1];
         }
     }
     return null;
@@ -200,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("file-input").addEventListener("change", handleFile);
     downloadButton.addEventListener("click", downloadValidAccounts);
 });
+
 document.getElementById("example-button").addEventListener("click", function() {
     const message = `
     ✪ P ➢ http://mohdtv.com:8880/c/
