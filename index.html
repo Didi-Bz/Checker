@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tester les comptes IPTV</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <h1>Tester des comptes IPTV</h1>
+    <p class="info-text">Attention le format reconnu est celui des fichiers texte de hits de scan IPTV
+        </br><button id="example-button">Cliquez ici pour voir un exemple</button>
+    </p>
+    <label for="file-input" class="label-file">Choisir un fichier</label>
+    <input id="file-input" type="file" accept=".txt" />
+
+
+    <div id="spinner-container">
+        <div id="spinner"></div> <!-- Ajoutez ce div pour le spinner -->
+    </div>
+
+
+    <!-- Zone de résultats -->
+    <div id="results-container">
+        <h2>Résultats</h2>
+        <pre id="results"></pre>
+        <button id="download-btn" style="display:none;">Télécharger les comptes valides</button>
+    </div>
+</body>
+
+
+</html>
