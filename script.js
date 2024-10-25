@@ -21,13 +21,19 @@ function hideSpinner() {
 async function testerConnections(panel, mac, user, password, m3u) {
     let valide = false;
 
+    // Assurez-vous que le panel est en HTTPS
+    if (!panel.startsWith("https://")) {
+        console.warn(`Le panel ${panel} n'est pas accessible via HTTPS. Connexion échouée.`);
+        return false;
+    }
+
     // Prioriser la connexion Xtream
-    if (user && password && panel) {
+    if (user && password) {
         console.log(`Test de la connexion Xtream (User/Pass) : ${user}/${password}`);
         valide = await testerXtream(panel, user, password);
     } 
     // Ensuite tester la connexion MAC
-    else if (mac && panel) {
+    else if (mac) {
         console.log(`Test de la connexion MAC : ${mac}`);
         valide = await testerMac(panel, mac);
     } 
@@ -167,7 +173,7 @@ function detecterPanel(lignes) {
     for (const ligne of lignes) {
         const panel = ligne.match(/(http:\/\/[^/]+)/);
         if (panel) {
-            return panel[1];
+            return panel[1].replace(/^http:\/\//, 'https://'); // Remplace http par https
         }
     }
     return null;
